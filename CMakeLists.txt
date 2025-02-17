@@ -22,10 +22,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #######################
 option(KAMINPAR_BUILD_APPS "Build binaries." ON)
 option(KAMINPAR_BUILD_DISTRIBUTED "Build distributed partitioner." OFF)
-option(KAMINPAR_BUILD_TESTS "Build unit tests" OFF)
-option(KAMINPAR_BUILD_TOOLS "Build tool binaries." OFF)
+option(KAMINPAR_BUILD_TESTS "Build unit tests" ON)
+option(KAMINPAR_BUILD_TOOLS "Build tool binaries." ON)
 option(KAMINPAR_BUILD_BENCHMARKS "Build benchmark binaries." OFF)
-option(KAMINPAR_BUILD_EXAMPLES "Build examples." OFF)
+option(KAMINPAR_BUILD_EXAMPLES "Build examples." ON)
 
 option(KAMINPAR_BUILD_EXPERIMENTAL_FEATURES "Include experimental features in the build. This might increase compile times drastically." OFF)
 
