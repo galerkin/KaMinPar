@@ -10,13 +10,11 @@
 #include <cctype>
 #include <cstdint>
 #include <exception>
+#include <fstream>
 #include <string>
+#include <vector>
 
-#include <fcntl.h>
 #include <kassert/kassert.hpp>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 namespace kaminpar::io {
 
@@ -35,30 +33,20 @@ private:
 class MappedFileToker {
 public:
   explicit MappedFileToker(const std::string &filename) {
-    _fd = open(filename.c_str(), O_RDONLY);
-    if (_fd == -1) {
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    if (!file) {
       throw TokerException("Cannot open input file");
     }
 
-    struct stat file_info{};
-    if (fstat(_fd, &file_info) == -1) {
-      close(_fd);
-      throw TokerException("Cannot get input file status");
+    _length = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    _contents.resize(_length);
+    if (!file.read(_contents.data(), _length)) {
+      throw TokerException("Cannot read input file");
     }
 
     _position = 0;
-    _length = static_cast<std::size_t>(file_info.st_size);
-
-    _contents = static_cast<char *>(mmap(nullptr, _length, PROT_READ, MAP_PRIVATE, _fd, 0));
-    if (_contents == MAP_FAILED) {
-      close(_fd);
-      throw TokerException("Cannot map input file into memory");
-    }
-  }
-
-  ~MappedFileToker() {
-    munmap(_contents, _length);
-    close(_fd);
   }
 
   void reset() {
@@ -170,10 +158,9 @@ public:
   }
 
 private:
-  int _fd;
   std::size_t _position;
   std::size_t _length;
-  char *_contents;
+  std::vector<char> _contents;
 };
 
 } // namespace kaminpar::io

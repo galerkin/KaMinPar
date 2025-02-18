@@ -12,11 +12,7 @@
 #include <exception>
 #include <fstream>
 #include <string>
-
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include <vector>
 
 #include "kaminpar-common/datastructures/static_array.h"
 
@@ -37,42 +33,31 @@ private:
 class BinaryReader {
 public:
   BinaryReader(const std::string &filename) {
-    _file = open(filename.c_str(), O_RDONLY);
-    if (_file == -1) {
+    _in.open(filename, std::ios::binary);
+    if (!_in) {
       throw BinaryReaderException("Cannot read the file that stores the graph");
     }
 
-    struct stat file_info;
-    if (fstat(_file, &file_info) == -1) {
-      close(_file);
-      throw BinaryReaderException("Cannot determine the size of the file that stores the graph");
-    }
+    _in.seekg(0, std::ios::end);
+    _length = _in.tellg();
+    _in.seekg(0, std::ios::beg);
 
-    _length = static_cast<std::size_t>(file_info.st_size);
-    _data = static_cast<std::uint8_t *>(mmap(nullptr, _length, PROT_READ, MAP_PRIVATE, _file, 0));
-    if (_data == MAP_FAILED) {
-      close(_file);
-      throw BinaryReaderException("Cannot map the file that stores the graph");
-    }
-  }
-
-  ~BinaryReader() {
-    munmap(_data, _length);
-    close(_file);
+    _data.resize(_length);
+    _in.read(reinterpret_cast<char*>(_data.data()), _length);
   }
 
   template <typename T> [[nodiscard]] T read(const std::size_t position) const {
-    return *reinterpret_cast<T *>(_data + position);
+    return *reinterpret_cast<const T *>(_data.data() + position);
   }
 
   template <typename T> [[nodiscard]] const T *fetch(const std::size_t position) const {
-    return reinterpret_cast<const T *>(_data + position);
+    return reinterpret_cast<const T *>(_data.data() + position);
   }
 
 private:
-  int _file;
+  std::ifstream _in;
   std::size_t _length;
-  std::uint8_t *_data;
+  std::vector<std::uint8_t> _data;
 };
 
 class BinaryWriter {
