@@ -27,7 +27,7 @@ option(KAMINPAR_BUILD_TOOLS "Build tool binaries." ON)
 option(KAMINPAR_BUILD_BENCHMARKS "Build benchmark binaries." OFF)
 option(KAMINPAR_BUILD_EXAMPLES "Build examples." ON)
 
-option(KAMINPAR_BUILD_EXPERIMENTAL_FEATURES "Include experimental features in the build. This might increase compile times drastically." OFF)
+option(KAMINPAR_BUILD_EXPERIMENTAL_FEATURES "Include experimental features in the build. This might increase compile times drastically." ON)
 
 # Control how to build
 ######################
@@ -45,7 +45,7 @@ option(KAMINPAR_BUILD_WITH_MTUNE_NATIVE "Build with -mtune=native." ON)
 option(KAMINPAR_BUILD_WITH_CCACHE "Use ccache to build." ON)
 option(KAMINPAR_BUILD_WITH_DEBUG_SYMBOLS "Always build with debug symbols, even in Release mode." ON)
 option(KAMINPAR_BUILD_WITH_MTKAHYPAR "If Mt-KaHyPar can be found, build the Mt-KaHyPar initial partitioner." OFF)
-option(KAMINPAR_BUILD_WITH_SPARSEHASH "Build with Google Sparsehash." ON)
+option(KAMINPAR_BUILD_WITH_SPARSEHASH "Build with Google Sparsehash." OFF)
 option(KAMINPAR_BUILD_WITH_PG "Build with the -pg option for profiling." OFF)
 option(KAMINPAR_BUILD_WITH_BACKWARD "Build with backward-cpp for stack traces (distributed partitioner only)." OFF)
 
